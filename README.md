@@ -1,6 +1,6 @@
 # CSSE-405 Data Structures and Algorithms - Final Project
 
-This repository contains the final project for the CSSE-405 Data Structures and Algorithms course. The project is a simple Employee Management System implemented in Java.
+This repository contains the final project for the CSSE-405 Data Structures and Algorithms course. The project is a `Employee Management System` implemented in Java.
 
 ## Project Structure
 
@@ -20,7 +20,11 @@ To run the application, execute the `Main` class. This will start the applicatio
 
 ## Author
 
-[Your Name]
+- Shahryar Khan - EB23210106097
+- Arsal Naeem - EB23210106070
+- Syed Shayan - EB23210106134
+- Abdul Rafay Khan - EB23210106007
+- Arham Javed - EB23210106069
 
 ## License
 

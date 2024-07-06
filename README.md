@@ -18,14 +18,10 @@ The project is structured as follows:
 
 To run the application, execute the `Main` class. This will start the application and display the user interface.
 
-## Author
+## Authors
 
-- Shahryar Khan - EB23210106097
-- Arsal Naeem - EB23210106070
-- Syed Shayan - EB23210106134
-- Abdul Rafay Khan - EB23210106007
-- Arham Javed - EB23210106069
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+- Shahryar Khan - `EB23210106097`
+- Arsal Naeem - `EB23210106070`
+- Syed Shayan - `EB23210106134`
+- Abdul Rafay Khan - `EB23210106007`
+- Arham Javed - `EB23210106069`

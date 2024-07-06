@@ -34,4 +34,8 @@ public class EmployeeManager {
         employees.remove(employee);
         employeeMap.remove(id);
     }
+
+    public List<Employee> getAllEmployees() {
+        return new ArrayList<>(employees);
+    }
 }

@@ -13,12 +13,22 @@ public class Employee {
 
     public void printEmployee() {
         System.out.println("Name: " + name);
-        System.out.println("Age: " + id);
+        System.out.println("ID: " + id);
         System.out.println("Salary: " + salary);
         System.out.println("Position: " + position);
     }
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", position='" + position + '\'' +
+                ", salary=" + salary +
+                '}';
     }
 }

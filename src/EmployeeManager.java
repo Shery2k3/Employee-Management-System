@@ -16,8 +16,7 @@ public class EmployeeManager {
     public void insertEmployee(EmployeeData employee) throws SQLException {
         Database.insertEmployeeData(
                 employee.getId(), employee.getName(), employee.getDepartment(),
-                employee.getJoinDate(), employee.getGender(), employee.getContact(),
-                employee.getSalary(), employee.getEmail(), employee.getAddress()
+                employee.getContact(), employee.getSalary(), employee.getEmail()
         );
         employeeCache.put(employee.getId(), employee);
         addRecentOperation("Inserted: " + employee.getId());
@@ -26,8 +25,7 @@ public class EmployeeManager {
     public void updateEmployee(EmployeeData employee) throws SQLException {
         Database.updateEmployeeData(
                 employee.getId(), employee.getName(), employee.getDepartment(),
-                employee.getContact(), employee.getJoinDate(), employee.getGender(),
-                employee.getEmail(), employee.getSalary(), employee.getAddress()
+                employee.getContact(), employee.getEmail(), employee.getSalary()
         );
         employeeCache.put(employee.getId(), employee);
         addRecentOperation("Updated: " + employee.getId());
@@ -50,9 +48,7 @@ public class EmployeeManager {
             EmployeeData employee = new EmployeeData(
                     (String) model.getValueAt(i, 0), (String) model.getValueAt(i, 1),
                     (String) model.getValueAt(i, 2), (String) model.getValueAt(i, 3),
-                    (String) model.getValueAt(i, 4), (String) model.getValueAt(i, 5),
-                    (String) model.getValueAt(i, 6), (String) model.getValueAt(i, 7),
-                    (String) model.getValueAt(i, 8)
+                    (String) model.getValueAt(i, 4), (String) model.getValueAt(i, 5)
             );
             employeeCache.put(employee.getId(), employee);
         }

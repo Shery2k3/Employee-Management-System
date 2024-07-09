@@ -8,8 +8,6 @@ public class EmployeeManagementGUI {
 
     private JFrame frame;
     private JTextField[] textFields;
-    private JTextArea addressArea;
-    private JComboBox<String> genderBox;
     private JTable employeeTable;
     private DefaultTableModel tableModel;
     private JTextField searchField;
@@ -74,7 +72,7 @@ public class EmployeeManagementGUI {
         inputPanel.setBorder(BorderFactory.createTitledBorder("Employee Information"));
         inputPanel.setBackground(new Color(236, 240, 241));
 
-        String[] labels = {"ID", "Name", "Department", "Joining Date", "Contact", "Email", "Salary"};
+        String[] labels = {"ID", "Name", "Department", "Contact", "Email", "Salary"};
         textFields = new JTextField[labels.length];
 
         for (int i = 0; i < labels.length; i++) {
@@ -83,12 +81,6 @@ public class EmployeeManagementGUI {
             inputPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         }
 
-        genderBox = new JComboBox<>(new String[]{"Male", "Female", "Other"});
-        inputPanel.add(createLabeledComponent("Gender", genderBox));
-        inputPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-
-        addressArea = new JTextArea(3, 20);
-        inputPanel.add(createLabeledComponent("Address", new JScrollPane(addressArea)));
         inputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -106,7 +98,7 @@ public class EmployeeManagementGUI {
         outputPanel.setBackground(new Color(236, 240, 241));
 
         tableModel = new DefaultTableModel(
-                new String[]{"ID", "Name", "Department", "Joining Date", "Gender", "Contact", "Salary", "Email", "Address"}, 0);
+                new String[]{"ID", "Name", "Department", "Contact", "Salary", "Email"}, 0);
         employeeTable = new JTable(tableModel);
         employeeTable.setFillsViewportHeight(true);
         JScrollPane scrollPane = new JScrollPane(employeeTable);
@@ -144,14 +136,6 @@ public class EmployeeManagementGUI {
         return panel;
     }
 
-    private JPanel createLabeledComponent(String label, JComponent component) {
-        JPanel panel = new JPanel(new BorderLayout(5, 0));
-        panel.setBackground(new Color(236, 240, 241));
-        panel.add(new JLabel(label), BorderLayout.WEST);
-        panel.add(component, BorderLayout.CENTER);
-        return panel;
-    }
-
     private JButton createStyledButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
         button.addActionListener(listener);
@@ -165,9 +149,7 @@ public class EmployeeManagementGUI {
         try {
             EmployeeData employee = new EmployeeData(
                     textFields[0].getText(), textFields[1].getText(), textFields[2].getText(),
-                    textFields[3].getText(), genderBox.getSelectedItem().toString(),
-                    textFields[4].getText(), textFields[6].getText(), textFields[5].getText(),
-                    addressArea.getText()
+                    textFields[3].getText(), textFields[5].getText(), textFields[4].getText()
             );
             employeeManager.insertEmployee(employee);
             loadData();
@@ -183,9 +165,7 @@ public class EmployeeManagementGUI {
         try {
             EmployeeData employee = new EmployeeData(
                     textFields[0].getText(), textFields[1].getText(), textFields[2].getText(),
-                    textFields[3].getText(), genderBox.getSelectedItem().toString(),
-                    textFields[4].getText(), textFields[6].getText(), textFields[5].getText(),
-                    addressArea.getText()
+                    textFields[3].getText(), textFields[5].getText(), textFields[4].getText()
             );
             employeeManager.updateEmployee(employee);
             loadData();

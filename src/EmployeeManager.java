@@ -1,16 +1,16 @@
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Deque;
+import java.util.ArrayDeque;
 import javax.swing.table.DefaultTableModel;
 
 public class EmployeeManager {
     private HashMap<String, EmployeeData> employeeCache;
-    private Queue<String> recentOperations;
+    private Deque<UndoableOperation> undoStack;
 
     public EmployeeManager() {
         employeeCache = new HashMap<>();
-        recentOperations = new LinkedList<>();
+        undoStack = new ArrayDeque<>();
     }
 
     public void insertEmployee(EmployeeData employee) throws SQLException {
@@ -19,22 +19,38 @@ public class EmployeeManager {
                 employee.getContact(), employee.getSalary(), employee.getEmail()
         );
         employeeCache.put(employee.getId(), employee);
-        addRecentOperation("Inserted: " + employee.getId());
+        undoStack.push(new UndoableOperation(OperationType.INSERT, employee));
     }
 
     public void updateEmployee(EmployeeData employee) throws SQLException {
+        EmployeeData oldEmployee = new EmployeeData(
+                employeeCache.get(employee.getId()).getId(),
+                employeeCache.get(employee.getId()).getName(),
+                employeeCache.get(employee.getId()).getDepartment(),
+                employeeCache.get(employee.getId()).getContact(),
+                employeeCache.get(employee.getId()).getSalary(),
+                employeeCache.get(employee.getId()).getEmail()
+        );
         Database.updateEmployeeData(
                 employee.getId(), employee.getName(), employee.getDepartment(),
                 employee.getContact(), employee.getEmail(), employee.getSalary()
         );
         employeeCache.put(employee.getId(), employee);
-        addRecentOperation("Updated: " + employee.getId());
+        undoStack.push(new UndoableOperation(OperationType.UPDATE, oldEmployee));
     }
 
     public void deleteEmployee(String id) throws SQLException {
+        EmployeeData deletedEmployee = new EmployeeData(
+                employeeCache.get(id).getId(),
+                employeeCache.get(id).getName(),
+                employeeCache.get(id).getDepartment(),
+                employeeCache.get(id).getContact(),
+                employeeCache.get(id).getSalary(),
+                employeeCache.get(id).getEmail()
+        );
         Database.deleteEmployeeData(id);
         employeeCache.remove(id);
-        addRecentOperation("Deleted: " + id);
+        undoStack.push(new UndoableOperation(OperationType.DELETE, deletedEmployee));
     }
 
     public void searchEmployee(DefaultTableModel model, String searchTerm, String column) throws SQLException {
@@ -54,14 +70,53 @@ public class EmployeeManager {
         }
     }
 
-    private void addRecentOperation(String operation) {
-        recentOperations.offer(operation);
-        if (recentOperations.size() > 5) {
-            recentOperations.poll();
+
+    public void undo() throws SQLException {
+        if (undoStack.isEmpty()) {
+            throw new IllegalStateException("No operations to undo");
+        }
+        UndoableOperation lastOperation = undoStack.pop();
+        switch (lastOperation.getType()) {
+            case INSERT:
+                Database.deleteEmployeeData(lastOperation.getEmployee().getId());
+                employeeCache.remove(lastOperation.getEmployee().getId());
+                break;
+            case UPDATE:
+                EmployeeData oldEmployee = lastOperation.getEmployee();
+                Database.updateEmployeeData(
+                        oldEmployee.getId(), oldEmployee.getName(), oldEmployee.getDepartment(),
+                        oldEmployee.getContact(), oldEmployee.getEmail(), oldEmployee.getSalary()
+                );
+                employeeCache.put(oldEmployee.getId(), oldEmployee);
+                break;
+            case DELETE:
+                EmployeeData deletedEmployee = lastOperation.getEmployee();
+                Database.insertEmployeeData(
+                        deletedEmployee.getId(), deletedEmployee.getName(), deletedEmployee.getDepartment(),
+                        deletedEmployee.getContact(), deletedEmployee.getSalary(), deletedEmployee.getEmail()
+                );
+                employeeCache.put(deletedEmployee.getId(), deletedEmployee);
+                break;
         }
     }
 
-    public String getRecentOperations() {
-        return String.join("\n", recentOperations);
+    public boolean canUndo() {
+        return !undoStack.isEmpty();
     }
+
+}
+
+enum OperationType { INSERT, UPDATE, DELETE }
+
+class UndoableOperation {
+    private OperationType type;
+    private EmployeeData employee;
+
+    public UndoableOperation(OperationType type, EmployeeData employee) {
+        this.type = type;
+        this.employee = employee;
+    }
+
+    public OperationType getType() { return type; }
+    public EmployeeData getEmployee() { return employee; }
 }

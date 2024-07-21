@@ -13,18 +13,7 @@ public class EmployeeManagementGUI {
     private JTextField searchField;
     private ButtonGroup searchGroup;
     private EmployeeManager employeeManager;
-
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                Database.dbInit();
-                EmployeeManagementGUI window = new EmployeeManagementGUI();
-                window.frame.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
+    private JButton undoButton;
 
     public EmployeeManagementGUI() {
         employeeManager = new EmployeeManager();
@@ -33,7 +22,7 @@ public class EmployeeManagementGUI {
 
     private void initialize() {
         frame = new JFrame();
-        frame.setTitle("Modern Employee Management System");
+        frame.setTitle("Employee Management System");
         frame.setBounds(100, 100, 1200, 700);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setBackground(new Color(240, 240, 240));
@@ -51,6 +40,8 @@ public class EmployeeManagementGUI {
 
         frame.add(createHeaderPanel(), BorderLayout.NORTH);
         frame.add(mainPanel, BorderLayout.CENTER);
+
+        updateUndoButtonState();
     }
 
     private JPanel createHeaderPanel() {
@@ -58,8 +49,8 @@ public class EmployeeManagementGUI {
         headerPanel.setBackground(new Color(41, 128, 185));
         headerPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-        JLabel titleLabel = new JLabel("Modern Employee Management System");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        JLabel titleLabel = new JLabel("Employee Management System");
+        titleLabel.setFont(new Font("Lora", Font.BOLD, 24));
         titleLabel.setForeground(Color.WHITE);
         headerPanel.add(titleLabel);
 
@@ -111,6 +102,9 @@ public class EmployeeManagementGUI {
         searchField = new JTextField(15);
         controlPanel.add(searchField);
         controlPanel.add(createStyledButton("Search", this::searchEmployee));
+        undoButton = createStyledButton("Undo", this::undoOperation);
+        undoButton.setEnabled(false);
+        controlPanel.add(undoButton);
 
         searchGroup = new ButtonGroup();
         String[] searchOptions = {"Name", "ID", "Email"};
@@ -125,6 +119,23 @@ public class EmployeeManagementGUI {
 
         return outputPanel;
     }
+
+    private void undoOperation(ActionEvent e) {
+        try {
+            employeeManager.undo();
+            loadData();
+            JOptionPane.showMessageDialog(frame, "Operation undone successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+            updateUndoButtonState();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(frame, "Error undoing operation", "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+    }
+
+    private void updateUndoButtonState() {
+        undoButton.setEnabled(employeeManager.canUndo());
+    }
+
 
     private JPanel createLabeledField(String label, int index) {
         JPanel panel = new JPanel(new BorderLayout(5, 0));
@@ -153,8 +164,8 @@ public class EmployeeManagementGUI {
             );
             employeeManager.insertEmployee(employee);
             loadData();
+            updateUndoButtonState();
             JOptionPane.showMessageDialog(frame, "Employee successfully inserted", "Success", JOptionPane.INFORMATION_MESSAGE);
-            showRecentOperations();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(frame, "Error inserting employee", "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
@@ -169,8 +180,8 @@ public class EmployeeManagementGUI {
             );
             employeeManager.updateEmployee(employee);
             loadData();
+            updateUndoButtonState();
             JOptionPane.showMessageDialog(frame, "Employee successfully updated", "Success", JOptionPane.INFORMATION_MESSAGE);
-            showRecentOperations();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(frame, "Error updating employee", "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
@@ -181,8 +192,8 @@ public class EmployeeManagementGUI {
         try {
             employeeManager.deleteEmployee(searchField.getText());
             loadData();
+            updateUndoButtonState();
             JOptionPane.showMessageDialog(frame, "Employee successfully deleted", "Success", JOptionPane.INFORMATION_MESSAGE);
-            showRecentOperations();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(frame, "Error deleting employee", "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
@@ -215,14 +226,12 @@ public class EmployeeManagementGUI {
     private void loadData() {
         try {
             employeeManager.loadData(tableModel);
+            updateUndoButtonState();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private void showRecentOperations() {
-        JOptionPane.showMessageDialog(frame, "Recent Operations:\n" + employeeManager.getRecentOperations(), "Recent Operations", JOptionPane.INFORMATION_MESSAGE);
-    }
 
     public JFrame getFrame() {
         return frame;

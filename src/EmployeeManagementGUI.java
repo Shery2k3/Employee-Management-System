@@ -74,7 +74,7 @@ public class EmployeeManagementGUI {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.weightx = 1.0;
 
-        String[] labels = {"ID", "Name", "Role", "Contact", "Email", "Salary"};
+        String[] labels = {"ID", "Name", "Role", "Contact", "Salary", "Email"};
         textFields = new JTextField[labels.length];
 
         for (int i = 0; i < labels.length; i++) {
@@ -163,15 +163,19 @@ public class EmployeeManagementGUI {
         DefaultRowSorter<TableModel, Integer> sorter = new TableRowSorter<>(tableModel);
         employeeTable.setRowSorter(sorter);
 
-        List<RowSorter.SortKey> sortKeys = new ArrayList<>(); // Corrected line
-
         if (sortBy.equals("ID")) {
-            sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING)); // Corrected line
-        } else if (sortBy.equals("Salary")) {
-            sortKeys.add(new RowSorter.SortKey(4, SortOrder.DESCENDING)); // Corrected line
+            sorter.setComparator(0, (String s1, String s2) -> Integer.compare(Integer.parseInt(s1), Integer.parseInt(s2)));
         }
 
-        sorter.setSortKeys(sortKeys); // Corrected line
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+
+        if (sortBy.equals("ID")) {
+            sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        } else if (sortBy.equals("Salary")) {
+            sortKeys.add(new RowSorter.SortKey(4, SortOrder.DESCENDING));
+        }
+
+        sorter.setSortKeys(sortKeys);
     }
 
     private void clearFields(ActionEvent e) {
@@ -219,13 +223,13 @@ public class EmployeeManagementGUI {
     private void insertEmployee(ActionEvent e) {
         if (!areAllFieldsFilled()) {
             JOptionPane.showMessageDialog(frame, "Please fill all fields", "Error", JOptionPane.ERROR_MESSAGE);
-        } else if (!isNumeric(textFields[0].getText()) || !isNumeric(textFields[5].getText())) {
+        } else if (!isNumeric(textFields[0].getText()) || !isNumeric(textFields[4].getText())) {
             JOptionPane.showMessageDialog(frame, "ID and Salary should be numeric", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             try {
                 EmployeeData employee = new EmployeeData(
                         textFields[0].getText(), textFields[1].getText(), textFields[2].getText(),
-                        textFields[3].getText(), textFields[5].getText(), textFields[4].getText()
+                        textFields[3].getText(), textFields[4].getText(), textFields[5].getText()
                 );
                 employeeManager.insertEmployee(employee);
                 loadData();
@@ -241,7 +245,7 @@ public class EmployeeManagementGUI {
     private void updateEmployee(ActionEvent e) {
         if (!isIdFieldFilled() || !isAtLeastOneOtherFieldFilled()) {
             JOptionPane.showMessageDialog(frame, "Please fill the ID field and at least one other field", "Error", JOptionPane.ERROR_MESSAGE);
-        } else if (!isNumeric(textFields[0].getText()) || !isNumeric(textFields[5].getText())) {
+        } else if (!isNumeric(textFields[0].getText()) || !isNumeric(textFields[4].getText())) {
             JOptionPane.showMessageDialog(frame, "ID and Salary should be numeric", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             try {

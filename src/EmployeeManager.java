@@ -89,7 +89,7 @@ public class EmployeeManager {
                 EmployeeData oldEmployee = lastOperation.getEmployee();
                 Database.updateEmployeeData(
                         oldEmployee.getId(), oldEmployee.getName(), oldEmployee.getDepartment(),
-                        oldEmployee.getContact(), oldEmployee.getEmail(), oldEmployee.getSalary()
+                        oldEmployee.getContact(), oldEmployee.getSalary(), oldEmployee.getEmail()
                 );
                 employeeCache.put(oldEmployee.getId(), oldEmployee);
                 break;

@@ -62,22 +62,35 @@ public class Database {
         conn.close();
     }
 
-    protected static void updateEmployeeData(String id, String name, String department, String contact,
-                                             String email, String salary
+    protected static void updateEmployeeData(String id, String name, String department,
+                                             String contact, String salary, String email
     ) throws SQLException {
-        String query = "UPDATE EmployeeData "
-                + "SET "
-                + "Employee_name = '"+name + "',"
-                + "department = '"+department + "',"
-                + "Employee_contact = '"+contact+ "',"
-                + "salary = '"+salary + "',"
-                + "Employee_email = '"+email + "'"
-                + "WHERE "
-                + "Employee_id = '"+id+"'";
-        System.out.println(query);
+        StringBuilder query = new StringBuilder("UPDATE EmployeeData SET ");
+
+        if (!name.isEmpty()) {
+            query.append("Employee_name = '").append(name).append("', ");
+        }
+        if (!department.isEmpty()) {
+            query.append("department = '").append(department).append("', ");
+        }
+        if (!contact.isEmpty()) {
+            query.append("Employee_contact = '").append(contact).append("', ");
+        }
+        if (!salary.isEmpty()) {
+            query.append("salary = '").append(salary).append("', ");
+        }
+        if (!email.isEmpty()) {
+            query.append("Employee_email = '").append(email).append("', ");
+        }
+
+        // Remove the last comma and space
+        query.setLength(query.length() - 2);
+
+        query.append(" WHERE Employee_id = '").append(id).append("'");
+
         conn = ds.getConnection();
-        Statement stmt =  conn.createStatement();
-        stmt.executeUpdate(query);
+        Statement stmt = conn.createStatement();
+        stmt.executeUpdate(query.toString());
         conn.close();
     }
 

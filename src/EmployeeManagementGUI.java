@@ -157,35 +157,65 @@ public class EmployeeManagementGUI {
     }
 
     private void insertEmployee(ActionEvent e) {
-        try {
-            EmployeeData employee = new EmployeeData(
-                    textFields[0].getText(), textFields[1].getText(), textFields[2].getText(),
-                    textFields[3].getText(), textFields[5].getText(), textFields[4].getText()
-            );
-            employeeManager.insertEmployee(employee);
-            loadData();
-            updateUndoButtonState();
-            JOptionPane.showMessageDialog(frame, "Employee successfully inserted", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(frame, "Error inserting employee", "Error", JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
+        if (areAllFieldsFilled()) {
+            try {
+                EmployeeData employee = new EmployeeData(
+                        textFields[0].getText(), textFields[1].getText(), textFields[2].getText(),
+                        textFields[3].getText(), textFields[5].getText(), textFields[4].getText()
+                );
+                employeeManager.insertEmployee(employee);
+                loadData();
+                updateUndoButtonState();
+                JOptionPane.showMessageDialog(frame, "Employee successfully inserted", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frame, "Error inserting employee", "Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Please fill all fields", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void updateEmployee(ActionEvent e) {
-        try {
-            EmployeeData employee = new EmployeeData(
-                    textFields[0].getText(), textFields[1].getText(), textFields[2].getText(),
-                    textFields[3].getText(), textFields[5].getText(), textFields[4].getText()
-            );
-            employeeManager.updateEmployee(employee);
-            loadData();
-            updateUndoButtonState();
-            JOptionPane.showMessageDialog(frame, "Employee successfully updated", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(frame, "Error updating employee", "Error", JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
+        if (isIdFieldFilled() && isAtLeastOneOtherFieldFilled()) {
+            try {
+                EmployeeData employee = new EmployeeData(
+                        textFields[0].getText(), textFields[1].getText(), textFields[2].getText(),
+                        textFields[3].getText(), textFields[5].getText(), textFields[4].getText()
+                );
+                employeeManager.updateEmployee(employee);
+                loadData();
+                updateUndoButtonState();
+                JOptionPane.showMessageDialog(frame, "Employee successfully updated", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frame, "Error updating employee", "Error", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Please fill the ID field and at least one other field", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private boolean areAllFieldsFilled() {
+        for (JTextField field : textFields) {
+            if (field.getText().isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isIdFieldFilled() {
+        return !textFields[0].getText().isEmpty();
+    }
+
+    private boolean isAtLeastOneOtherFieldFilled() {
+        for (int i = 1; i < textFields.length; i++) {
+            if (!textFields[i].getText().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void deleteEmployee(ActionEvent e) {

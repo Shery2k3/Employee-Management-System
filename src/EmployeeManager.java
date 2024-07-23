@@ -22,20 +22,24 @@ public class EmployeeManager {
         undoStack.push(new UndoableOperation(OperationType.INSERT, employee));
     }
 
-    public void updateEmployee(EmployeeData employee) throws SQLException {
-        EmployeeData oldEmployee = new EmployeeData(
-                employeeCache.get(employee.getId()).getId(),
-                employeeCache.get(employee.getId()).getName(),
-                employeeCache.get(employee.getId()).getDepartment(),
-                employeeCache.get(employee.getId()).getContact(),
-                employeeCache.get(employee.getId()).getSalary(),
-                employeeCache.get(employee.getId()).getEmail()
+    public void updateEmployee(EmployeeData newEmployee) throws SQLException {
+        EmployeeData oldEmployee = employeeCache.get(newEmployee.getId());
+        if (oldEmployee == null) {
+            throw new IllegalArgumentException("No employee with ID " + newEmployee.getId());
+        }
+
+        EmployeeData updatedEmployee = new EmployeeData(
+                oldEmployee.getId(),
+                newEmployee.getName().isEmpty() ? oldEmployee.getName() : newEmployee.getName(),
+                newEmployee.getDepartment().isEmpty() ? oldEmployee.getDepartment() : newEmployee.getDepartment(),
+                newEmployee.getContact().isEmpty() ? oldEmployee.getContact() : newEmployee.getContact(),
+                newEmployee.getSalary().isEmpty() ? oldEmployee.getSalary() : newEmployee.getSalary(),
+                newEmployee.getEmail().isEmpty() ? oldEmployee.getEmail() : newEmployee.getEmail()
         );
-        Database.updateEmployeeData(
-                employee.getId(), employee.getName(), employee.getDepartment(),
-                employee.getContact(), employee.getEmail(), employee.getSalary()
-        );
-        employeeCache.put(employee.getId(), employee);
+
+        Database.updateEmployeeData(updatedEmployee.getId(), updatedEmployee.getName(), updatedEmployee.getDepartment(),
+                updatedEmployee.getContact(), updatedEmployee.getSalary(), updatedEmployee.getEmail());
+        employeeCache.put(updatedEmployee.getId(), updatedEmployee);
         undoStack.push(new UndoableOperation(OperationType.UPDATE, oldEmployee));
     }
 

@@ -90,10 +90,12 @@ public class EmployeeManagementGUI {
         buttonPanel.setBackground(new Color(236, 240, 241));
         JButton insertButton = createStyledButton("Insert", this::insertEmployee);
         JButton updateButton = createStyledButton("Update", this::updateEmployee);
+        JButton clearButton = createStyledButton("Clear", this::clearFields); // New clear button
         insertButton.setPreferredSize(new Dimension(100, 30));
         updateButton.setPreferredSize(new Dimension(100, 30));
         buttonPanel.add(insertButton);
         buttonPanel.add(updateButton);
+        buttonPanel.add(clearButton);
 
         gbc.gridx = 0;
         gbc.gridy = labels.length;
@@ -147,6 +149,12 @@ public class EmployeeManagementGUI {
         return outputPanel;
     }
 
+    private void clearFields(ActionEvent e) {
+        for (JTextField field : textFields) {
+            field.setText("");
+        }
+    }
+
     private void undoOperation(ActionEvent e) {
         try {
             employeeManager.undo();
@@ -184,7 +192,11 @@ public class EmployeeManagementGUI {
     }
 
     private void insertEmployee(ActionEvent e) {
-        if (areAllFieldsFilled()) {
+        if (!areAllFieldsFilled()) {
+            JOptionPane.showMessageDialog(frame, "Please fill all fields", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (!isNumeric(textFields[0].getText()) || !isNumeric(textFields[5].getText())) {
+            JOptionPane.showMessageDialog(frame, "ID and Salary should be numeric", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
             try {
                 EmployeeData employee = new EmployeeData(
                         textFields[0].getText(), textFields[1].getText(), textFields[2].getText(),
@@ -198,13 +210,15 @@ public class EmployeeManagementGUI {
                 JOptionPane.showMessageDialog(frame, "Error inserting employee", "Error", JOptionPane.ERROR_MESSAGE);
                 ex.printStackTrace();
             }
-        } else {
-            JOptionPane.showMessageDialog(frame, "Please fill all fields", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void updateEmployee(ActionEvent e) {
-        if (isIdFieldFilled() && isAtLeastOneOtherFieldFilled()) {
+        if (!isIdFieldFilled() || !isAtLeastOneOtherFieldFilled()) {
+            JOptionPane.showMessageDialog(frame, "Please fill the ID field and at least one other field", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (!isNumeric(textFields[0].getText()) || !isNumeric(textFields[5].getText())) {
+            JOptionPane.showMessageDialog(frame, "ID and Salary should be numeric", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
             try {
                 EmployeeData employee = new EmployeeData(
                         textFields[0].getText(), textFields[1].getText(), textFields[2].getText(),
@@ -218,8 +232,6 @@ public class EmployeeManagementGUI {
                 JOptionPane.showMessageDialog(frame, "Error updating employee", "Error", JOptionPane.ERROR_MESSAGE);
                 ex.printStackTrace();
             }
-        } else {
-            JOptionPane.showMessageDialog(frame, "Please fill the ID field and at least one other field", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -243,6 +255,10 @@ public class EmployeeManagementGUI {
             }
         }
         return false;
+    }
+
+    private boolean isNumeric(String str) {
+        return str.matches("-?\\d+(\\.\\d+)?");  // match a number with optional '-' and decimal.
     }
 
     private void deleteEmployee(ActionEvent e) {

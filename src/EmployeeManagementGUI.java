@@ -58,27 +58,39 @@ public class EmployeeManagementGUI {
     }
 
     private JPanel createInputPanel() {
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
+        JPanel inputPanel = new JPanel(new GridBagLayout());
         inputPanel.setBorder(BorderFactory.createTitledBorder("Employee Information"));
         inputPanel.setBackground(new Color(236, 240, 241));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
 
         String[] labels = {"ID", "Name", "Department", "Contact", "Email", "Salary"};
         textFields = new JTextField[labels.length];
 
         for (int i = 0; i < labels.length; i++) {
-            JPanel field = createLabeledField(labels[i], i);
-            inputPanel.add(field);
-            inputPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        }
+            gbc.gridx = 0;
+            gbc.gridy = i;
+            gbc.anchor = GridBagConstraints.LINE_END;
+            inputPanel.add(new JLabel(labels[i]), gbc);
 
-        inputPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+            gbc.gridx = 1;
+            gbc.anchor = GridBagConstraints.LINE_START;
+            textFields[i] = new JTextField(20);
+            inputPanel.add(textFields[i], gbc);
+        }
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.setBackground(new Color(236, 240, 241));
         buttonPanel.add(createStyledButton("Insert", this::insertEmployee));
         buttonPanel.add(createStyledButton("Update", this::updateEmployee));
-        inputPanel.add(buttonPanel);
+
+        gbc.gridx = 0;
+        gbc.gridy = labels.length;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        inputPanel.add(buttonPanel, gbc);
 
         return inputPanel;
     }

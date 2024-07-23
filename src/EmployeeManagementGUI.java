@@ -3,6 +3,9 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import java.awt.event.*;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.ArrayList;
 
 public class EmployeeManagementGUI {
 
@@ -135,8 +138,15 @@ public class EmployeeManagementGUI {
         undoButton.setEnabled(false);
         controlPanel.add(undoButton);
 
+        String[] sortOptions = {"ID", "Salary"};
+        JComboBox<String> sortDropdown = new JComboBox<>(sortOptions);
+        sortDropdown.addActionListener(e -> sortData((String) sortDropdown.getSelectedItem()));
+        controlPanel.add(sortDropdown);
+
+        controlPanel.add(createStyledButton("Sort", e -> sortData((String) sortDropdown.getSelectedItem())));
+
         searchGroup = new ButtonGroup();
-        String[] searchOptions = {"Name", "ID", "Email"};
+        String[] searchOptions = {"ID", "Role"};
         for (String option : searchOptions) {
             JRadioButton radio = new JRadioButton(option);
             radio.setBackground(new Color(236, 240, 241));
@@ -147,6 +157,21 @@ public class EmployeeManagementGUI {
         outputPanel.add(controlPanel, BorderLayout.NORTH);
 
         return outputPanel;
+    }
+
+    private void sortData(String sortBy) {
+        DefaultRowSorter<TableModel, Integer> sorter = new TableRowSorter<>(tableModel);
+        employeeTable.setRowSorter(sorter);
+
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>(); // Corrected line
+
+        if (sortBy.equals("ID")) {
+            sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING)); // Corrected line
+        } else if (sortBy.equals("Salary")) {
+            sortKeys.add(new RowSorter.SortKey(4, SortOrder.DESCENDING)); // Corrected line
+        }
+
+        sorter.setSortKeys(sortKeys); // Corrected line
     }
 
     private void clearFields(ActionEvent e) {
@@ -222,7 +247,7 @@ public class EmployeeManagementGUI {
             try {
                 EmployeeData employee = new EmployeeData(
                         textFields[0].getText(), textFields[1].getText(), textFields[2].getText(),
-                        textFields[3].getText(), textFields[5].getText(), textFields[4].getText()
+                        textFields[3].getText(), textFields[4].getText(), textFields[5].getText()
                 );
                 employeeManager.updateEmployee(employee);
                 loadData();
@@ -275,17 +300,20 @@ public class EmployeeManagementGUI {
 
     private void searchEmployee(ActionEvent e) {
         try {
-            String searchType = searchGroup.getSelection() != null ?
-                    ((JRadioButton) searchGroup.getSelection()).getText() : "";
-            switch (searchType) {
-                case "Name":
-                    employeeManager.searchEmployee(tableModel, searchField.getText(), "Employee_name");
+            String searchType = "";
+            for (Enumeration<AbstractButton> buttons = searchGroup.getElements(); buttons.hasMoreElements();) {
+                AbstractButton button = buttons.nextElement();
+                if (button.isSelected()) {
+                    searchType = button.getText();
                     break;
+                }
+            }
+            switch (searchType) {
                 case "ID":
                     employeeManager.searchEmployee(tableModel, searchField.getText(), "Employee_id");
                     break;
-                case "Email":
-                    employeeManager.searchEmployee(tableModel, searchField.getText(), "Employee_email");
+                case "Role":
+                    employeeManager.searchEmployee(tableModel, searchField.getText(), "department"); // Changed column name to "department"
                     break;
                 default:
                     JOptionPane.showMessageDialog(frame, "Please select a search field", "Error", JOptionPane.ERROR_MESSAGE);

@@ -33,6 +33,7 @@ public class EmployeeManagementGUI {
         mainPanel.setBackground(new Color(240, 240, 240));
 
         JPanel inputPanel = createInputPanel();
+        inputPanel.setPreferredSize(new Dimension(300, frame.getHeight()));
         JPanel outputPanel = createOutputPanel();
 
         mainPanel.add(inputPanel, BorderLayout.WEST);
@@ -59,12 +60,16 @@ public class EmployeeManagementGUI {
 
     private JPanel createInputPanel() {
         JPanel inputPanel = new JPanel(new GridBagLayout());
-        inputPanel.setBorder(BorderFactory.createTitledBorder("Employee Information"));
+        inputPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Employee Information"),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
         inputPanel.setBackground(new Color(236, 240, 241));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.weightx = 1.0;
 
         String[] labels = {"ID", "Name", "Department", "Contact", "Email", "Salary"};
         textFields = new JTextField[labels.length];
@@ -72,25 +77,35 @@ public class EmployeeManagementGUI {
         for (int i = 0; i < labels.length; i++) {
             gbc.gridx = 0;
             gbc.gridy = i;
-            gbc.anchor = GridBagConstraints.LINE_END;
+            gbc.anchor = GridBagConstraints.LINE_START;
             inputPanel.add(new JLabel(labels[i]), gbc);
 
             gbc.gridx = 1;
-            gbc.anchor = GridBagConstraints.LINE_START;
-            textFields[i] = new JTextField(20);
+            gbc.anchor = GridBagConstraints.LINE_END;
+            textFields[i] = new JTextField(25);
             inputPanel.add(textFields[i], gbc);
         }
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         buttonPanel.setBackground(new Color(236, 240, 241));
-        buttonPanel.add(createStyledButton("Insert", this::insertEmployee));
-        buttonPanel.add(createStyledButton("Update", this::updateEmployee));
+        JButton insertButton = createStyledButton("Insert", this::insertEmployee);
+        JButton updateButton = createStyledButton("Update", this::updateEmployee);
+        insertButton.setPreferredSize(new Dimension(100, 30));
+        updateButton.setPreferredSize(new Dimension(100, 30));
+        buttonPanel.add(insertButton);
+        buttonPanel.add(updateButton);
 
         gbc.gridx = 0;
         gbc.gridy = labels.length;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(15, 5, 5, 5);
         inputPanel.add(buttonPanel, gbc);
+
+        // Add empty space at the bottom to center content vertically
+        gbc.gridy = labels.length + 1;
+        gbc.weighty = 1.0;
+        inputPanel.add(Box.createVerticalGlue(), gbc);
 
         return inputPanel;
     }

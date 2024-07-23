@@ -71,7 +71,7 @@ public class EmployeeManagementGUI {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.weightx = 1.0;
 
-        String[] labels = {"ID", "Name", "Department", "Contact", "Email", "Salary"};
+        String[] labels = {"ID", "Name", "Role", "Contact", "Email", "Salary"};
         textFields = new JTextField[labels.length];
 
         for (int i = 0; i < labels.length; i++) {
@@ -116,7 +116,7 @@ public class EmployeeManagementGUI {
         outputPanel.setBackground(new Color(236, 240, 241));
 
         tableModel = new DefaultTableModel(
-                new String[]{"ID", "Name", "Department", "Contact", "Salary", "Email"}, 0);
+                new String[]{"ID", "Name", "Role", "Contact", "Salary", "Email"}, 0);
         employeeTable = new JTable(tableModel);
         employeeTable.setFillsViewportHeight(true);
         JScrollPane scrollPane = new JScrollPane(employeeTable);
